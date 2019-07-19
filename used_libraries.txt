@@ -1,0 +1,10 @@
+express
+mongoose
+colors -D
+npm install body-parser
+npm install validator
+npm i nodemon -D
+  to be included as:  "dev": "nodemon server.js"
+  to be executed as: npm run dev
+npm i bcryptjs
+npm i jsonwebtoken
