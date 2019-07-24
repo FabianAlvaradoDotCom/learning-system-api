@@ -52,4 +52,8 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/latest-single-sensor-readings", authMiddleware, (req, res) => {
+  res.send(req.body);
+});
+
 module.exports = router;
