@@ -52,8 +52,36 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/latest-single-sensor-readings", authMiddleware, (req, res) => {
-  res.send(req.body);
-});
+router.post(
+  "/latest-single-sensor-readings",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      let sensor_to_fetch = req.body.selected_sensor;
+      let found_sensor_readings = await Sensor.find(
+        {
+          // Criteria to find the document
+          sensor_name: sensor_to_fetch
+        },
+        {
+          // Properties to ommit sending
+          _id: 0,
+          __v: 0,
+          owner: 0,
+          reading_type: 0,
+          equipment_id: 0
+        },
+        {
+          // Order of the records
+          sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
+        }
+      );
+      console.log(found_sensor_readings);
+      res.send(found_sensor_readings);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 module.exports = router;
