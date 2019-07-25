@@ -67,6 +67,7 @@ router.post(
           // Properties to ommit sending
           _id: 0,
           __v: 0,
+          sensor_name: 0,
           owner: 0,
           reading_type: 0,
           equipment_id: 0
@@ -75,7 +76,7 @@ router.post(
           // Order of the records
           sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
         }
-      );
+      ).limit(20);
       console.log(found_sensor_readings);
       res.send(found_sensor_readings);
     } catch (error) {
