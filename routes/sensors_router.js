@@ -52,6 +52,7 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
   }
 });
 
+// Request to fetch the latest readings of a sensor for the TABLE
 router.post(
   "/latest-single-sensor-readings",
   authMiddleware,
@@ -77,8 +78,33 @@ router.post(
           sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
         }
       ).limit(20);
-      console.log(found_sensor_readings);
-      res.send(found_sensor_readings);
+
+      // Request to fetch the latest readings of a sensor for the TABLE (limited to 200)
+      let found_sensor_readings_graph = await Sensor.find(
+        {
+          // Criteria to find the document
+          sensor_name: sensor_to_fetch
+        },
+        {
+          // Properties to ommit sending
+          _id: 0,
+          __v: 0,
+          sensor_name: 0,
+          owner: 0,
+          reading_type: 0,
+          equipment_id: 0,
+          unit: 0,
+          numeral_system: 0,
+          reading_date: 0
+        },
+        {
+          // Order of the records
+          sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
+        }
+      ).limit(200);
+
+      //console.log(found_sensor_readings);
+      res.json({ found_sensor_readings, found_sensor_readings_graph });
     } catch (error) {
       console.log(error);
     }
