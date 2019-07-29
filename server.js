@@ -52,6 +52,7 @@ server.listen(port, () => {
 
 // Testing some socket io actions
 
-io.on("connection", () => {
-  console.log("Connected");
+io.on("connection", socket => {
+  //console.log("Connected");
+  socket.emit("prueba");
 });
