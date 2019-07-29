@@ -1,9 +1,15 @@
+const path = require("path");
+const http = require("http"); // This has been added to implement socket.io
 const express = require("express");
-const colors = require("colors");
+const socket_io = require("socket.io");
 const bodyParser = require("body-parser");
+const colors = require("colors");
 
-// Initializing the express function
+// Initializing the express function but this this time we are also implementing Socket IO
 const app = express();
+const server = http.createServer(app);
+const io = socket_io(server);
+
 const api_router = require("./routes/auth_router");
 const sensor_router = require("./routes/sensors_router");
 const no_access_router = require("./routes/no-access_router");
@@ -30,8 +36,22 @@ app.use("/", no_access_router);
 // Starting the server
 const port = process.env.PORT || 5000;
 
+// We replaced this to implement socket.io by the below
+/*
 const server = app.listen(port, () => {
   if (port === 5000) {
     console.log(`Server running on ${server.address().port}`.green.inverse);
   }
+});
+//*/
+
+// By this
+server.listen(port, () => {
+  console.log(`Server running on ${server.address().port}`.green.inverse);
+});
+
+// Testing some socket io actions
+
+io.on("connection", () => {
+  console.log("Connected");
 });
