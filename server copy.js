@@ -1,23 +1,20 @@
-/*
-In this implementation we are already using sockets for realtime data visualization
-Instead of creating the logic for the sockets in this, the server file, we are passing the server (io)
-as an argument to the router which endpoints are emitting events.
-*/
-
 const path = require("path");
 const http = require("http"); // This has been added to implement socket.io
 const express = require("express");
-const socket_io = require("socket.io"); // This has been added to implement socket.io
+const socket_io = require("socket.io");
 const bodyParser = require("body-parser");
 const colors = require("colors");
 
+// Importing socket.io handlers
+const socket_handlers = require("./sockets_io/socket_handlers.js");
+
 // Initializing the express function but this this time we are also implementing Socket IO
 const app = express();
-const server = http.createServer(app); // This has been added to implement socket.io
-const io = socket_io(server); // This has been added to implement socket.io
+const server = http.createServer(app);
+const io = socket_io(server);
 
 const api_router = require("./routes/auth_router");
-const sensor_router = require("./routes/sensors_router")(io); // This has been added to implement socket.io
+const sensor_router = require("./routes/sensors_router");
 const no_access_router = require("./routes/no-access_router");
 const capturer_router = require("./routes/capturer_router");
 
@@ -55,3 +52,6 @@ const server = app.listen(port, () => {
 server.listen(port, () => {
   console.log(`Server running on ${server.address().port}`.green.inverse);
 });
+
+// Creating the socket.io handlers and passing the server for their execution
+socket_handlers(io);
