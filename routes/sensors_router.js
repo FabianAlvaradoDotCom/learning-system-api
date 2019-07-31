@@ -12,12 +12,13 @@ var returnRouter = io => {
   router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
     try {
       console.log(`${req.body.file_creation_date}`.inverse.yellow);
-      req.body.sensors.forEach(async sent_sensor => {
+
+      req.body.sensors.forEach(async (sent_sensor, index) => {
         let new_sensor = new Sensor({
-          sensor_name: sent_sensor[Object.keys(sent_sensor)[0]],
-          output_data: sent_sensor.output_data,
-          unit: sent_sensor.unit,
-          numeral_system: sent_sensor.numeral_system,
+          sensor_name: "sensor0" + (index >= 1 ? index + 2 : index + 1),
+          output_data: +sent_sensor,
+          unit: "mm",
+          numeral_system: "dec",
           reading_type: "static", // sent_sensor.reading_type,
           reading_date: req.body.file_creation_date, // sent_sensor.reading_date
           owner: req.user._id, // We are using the user id that was decoded from the authentication
