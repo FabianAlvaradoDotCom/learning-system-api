@@ -20,7 +20,7 @@ var returnRouter = io => {
           unit: "mm",
           numeral_system: "dec",
           reading_type: "static", // sent_sensor.reading_type,
-          reading_date: req.body.file_creation_date, // sent_sensor.reading_date
+          reading_date: +req.body.file_creation_date, // sent_sensor.reading_date
           owner: req.user._id, // We are using the user id that was decoded from the authentication
           // process and passed in the request
           equipment_id: req.body.equipment_id // We are using the Equipment/Capturer id that was sent by the
