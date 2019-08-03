@@ -15,7 +15,7 @@ var returnRouter = io => {
 
       req.body.sensors.forEach(async (sent_sensor, index) => {
         let new_sensor = new Sensor({
-          sensor_name: "sensor0" + (index >= 1 ? index + 2 : index + 1),
+          sensor_name: "sensor0" + (index + 1),
           output_data: +sent_sensor,
           unit: "mm",
           numeral_system: "dec",
