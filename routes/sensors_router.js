@@ -15,11 +15,11 @@ var returnRouter = io => {
 
       req.body.sensors.forEach(async (sent_sensor, index) => {
         let new_sensor = new Sensor({
-          sensor_name: "sensor0" + (index + 1),
-          output_data: +sent_sensor,
-          unit: "mm",
-          numeral_system: "dec",
-          reading_type: "static", // sent_sensor.reading_type,
+          sensor_name: sent_sensor.sensor_name,
+          output_data: +sent_sensor.output_data,
+          unit: sent_sensor.unit,
+          numeral_system: sent_sensor.numeral_system,
+          reading_type: sent_sensor.reading_type,
           reading_date: +req.body.file_creation_date, // sent_sensor.reading_date
           owner: req.user._id, // We are using the user id that was decoded from the authentication
           // process and passed in the request
