@@ -92,7 +92,7 @@ var returnRouter = io => {
             // Properties to ommit sending
             _id: 0,
             __v: 0,
-            sensor_name: 0,
+            //sensor_name: 0,
             owner: 0,
             reading_type: 0,
             equipment_id: 0,
