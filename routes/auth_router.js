@@ -84,11 +84,20 @@ router.post("/login", async (req, res) => {
 
     // Next step is fetching the data of the latest record created by the EQUIPMENT
     // we will get the id of the equipment as it was provided in teh request
-    const latest_created_record_by_equipment = await Sensor.find(
+    let latest_created_record_by_equipment = await Sensor.find(
       { equipment_id: req.body.equipment_id },
       {},
       { sort: { reading_date: -1 } }
     ).limit(1);
+
+    // We add this safety condition, if no sensor has been created ever, we send this in the response:
+    if(latest_created_record_by_equipment.length === 0){
+      latest_created_record_by_equipment[0] = {
+        sensor_name: "no-sensor",
+        output_data: 0,
+        reading_date: 1
+      }
+    }
 
     console.log(`${latest_created_record_by_equipment.length}`.inverse.red);
     // We are sending a secured user data version after the sensitive details are removed by the .getPublicProfile() method
