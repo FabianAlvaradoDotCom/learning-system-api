@@ -55,6 +55,54 @@ var returnRouter = io => {
     }
   });
 
+
+
+// This is the login code for visualization Application
+router.post("/three-latest-sensors-for-dashboard",  authMiddleware, async (req, res) => {
+  try {
+    // Once we are authenticated, we fetch the data of the latest 3 records saved
+    let three_latest_records = [ {sensor_name: "sensor01"}, {sensor_name: "sensor02"},{sensor_name: "sensor03"}];
+
+    // We create a function to create an array of latest records, it will be run for each sensor
+    const findSensorData = async (sensor_name) => {
+      let sensor_output_data_array = await Sensor.find(
+        {
+          // Conditions to match the sensors
+          sensor_name
+        },
+        {
+          // Porperties of the sensor to ommit sending:
+          _id: 0,
+          __v: 0,
+          sensor_name: 0, 
+          owner: 0,
+          reading_type: 0,
+          equipment_id: 0,
+          numeral_system: 0,
+          reading_date: 0,
+          unit: 0
+        },
+        {
+          // Sort criteria
+          sort: { reading_date: -1 }
+        }
+      ).limit(50);
+      return sensor_output_data_array;
+    };
+
+    let sensor_01_array = await findSensorData(three_latest_records[0].sensor_name);
+    let sensor_02_array = await findSensorData(three_latest_records[1].sensor_name);
+    let sensor_03_array = await findSensorData(three_latest_records[2].sensor_name);
+
+    res.status(200).send([sensor_01_array, sensor_02_array, sensor_03_array]);
+    
+    //
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
+  }
+});
+
   // Request to fetch the latest readings of a sensor for the TABLE
   router.post(
     "/latest-single-sensor-readings",

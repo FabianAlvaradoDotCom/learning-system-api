@@ -130,6 +130,35 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// This is the login code for visualization Application
+router.post("/login-visualization", async (req, res) => {
+  try {
+    // The credentials received in the request body will be compared to the data base
+    // for doing that we call the below middleware function.
+    // .findByCredentials() is not an existing method, we just created it on the model file
+    // The returned value by this function is the user we found in the DB (only of password matched)
+    const authenticatedUser = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    // .generateAuthToken() is not an existing method, we just created it on the model file
+    // Then we run this function in the middleware that will return a valid token
+    const token = await authenticatedUser.generateAuthToken();
+
+    
+      res.status(200).send({
+        user: authenticatedUser.getPublicProfile(),
+        token
+      });
+      console.log( authenticatedUser, token );
+    
+    //
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e);
+  }
+});
+
 // Logout One Device
 router.post("/logout", authMiddleware, async (req, res) => {
   try {
