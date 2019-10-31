@@ -1,11 +1,11 @@
 const express = require("express");
 const router = new express.Router();
 
-const { Parser } = require("json2csv");
-
 const CronJob = require("cron").CronJob;
 
-const sendReportByEmail = require("../emailer/emailer");
+const convertToCSVandEmail = require('../report_building_files/csv_converter');
+
+//const sendReportByEmail = require("../report_building_files/emailer");
 
 // Importing Reports Schema
 const Report = require("../models/Report_model");
@@ -17,14 +17,11 @@ const authMiddleware = require("../middleware/auth-middleware");
 
 let object_of_jobs = {};
 
-const retrieveAllReports = async () => {
-  let all_reports = await Report.find();
-  return all_reports;
-};
+
 
 router.post("/get-reports-list", authMiddleware, async (req, res) => {
   try {
-    let reports_array = await retrieveAllReports();
+    let reports_array = await Report.find();
     console.log("This is my reports array", reports_array);
     res.status(200).send({ reports_array });
   } catch (error) {
@@ -36,9 +33,7 @@ router.post("/get-reports-list", authMiddleware, async (req, res) => {
 router.post("/schedule-report", authMiddleware, async (req, res) => {
   // When creating a record it is not necessary to save the created date separately, as it comes in the id, to get it we just need to get it like this:
   // array_of_found_objects[0]._id.getTimestamp()
-  try {
-    console.log(req.body);
-    //*
+  try {    
     let new_report = new Report({
       report_visible_name: req.body.report_name,
       report_internal_name: "place_holder",
@@ -46,20 +41,20 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
       report_email_body: req.body.email_body,
       report_schedule_string: req.body.scheduling_date
     });
-    let preliminar_report = await new_report.save();
 
-    preliminar_report.report_internal_name = `rep_${preliminar_report._id}`;
+    let saved_preliminar_report = await new_report.save();
 
-    let saved_report = await preliminar_report.save();
+    saved_preliminar_report.report_internal_name = `rep_${saved_preliminar_report._id}`;
+
+    let saved_report = await saved_preliminar_report.save();
 
     console.log(saved_report);
 
-    //*
-    object_of_jobs[preliminar_report.report_internal_name] = new CronJob(
-      new Date("" + req.body.scheduling_date),
+    //* Scheduling the job:
+    object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
       async function() {
         try {
-          let report_sensor_readings = await Sensor.find(
+          let sensor_readings_array_for_report = await Sensor.find(
             {
               // Criteria to find the document
               sensor_name: "sensor01"
@@ -79,26 +74,24 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             }
           ).limit(200);
 
-          const fields = ["output_data", "reading_date"];
-          const opts = { fields };
+          // Creating placeholder data:
 
-          const parser = new Parser(opts);
-          const csv = parser.parse(report_sensor_readings);
-          console.log(csv);
-          console.log(`Sending email`.yellow.inverse);
-          sendReportByEmail(
-            saved_report.report_distribution_list,
-            saved_report.report_email_body,
-            csv
-          );
+          //let csv = 
+          await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
+          
+
+          /*console.log(`THIS IS TE DATA THAT SHOULD BE SENT TO THE EMAILER: ${csv}`.red.inverse);
+
+          sendReportByEmail( saved_report.report_distribution_list, saved_report.report_email_body, csv, "csv" );*/
+
         } catch (err) {
           console.error(err);
-          res.status(500).send({ error });
+          res.status(404).send({ error });
         }
       }
     );
 
-    object_of_jobs[preliminar_report.report_internal_name].start();
+    object_of_jobs[saved_preliminar_report.report_internal_name].start();
     //*/
 
     res.status(200).send({ message: "Report created successfully" });
