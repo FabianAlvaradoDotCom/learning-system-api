@@ -103,7 +103,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
  
 });
 
-router.post("/destruir-report", authMiddleware, async (req, res) => {
+router.post("/stop-report", authMiddleware, async (req, res) => {
   try {
     let reporte_encontrado = await Report.find({
       _id: "5db9066b1022756d5492c5b9"
@@ -119,5 +119,6 @@ router.post("/destruir-report", authMiddleware, async (req, res) => {
     res.status(500).send("Error with report");
   }
 });
+
 
 module.exports = router;
