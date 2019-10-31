@@ -34,7 +34,8 @@ const auth = async (req, res, next) => {
       // Before we finish the middleware actions, we add the fetched user to the request that will be passed on to the route so it can be used later without spending time and processing on it.
       req.user = user;
 
-      console.log(user);
+      //console.log(user);
+      console.log("User authenticated");
 
       // We finish the middleware actions by letting the 3rd argument on the route to run
       next();
