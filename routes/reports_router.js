@@ -93,6 +93,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
           );
         } catch (err) {
           console.error(err);
+          res.status(500).send({ error });
         }
       }
     );
@@ -106,22 +107,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     res.status(500).send({ error });
   }
 
-  /*try{
-    
-    console.log(req.body.scheduling_date);
-    
-    object_of_jobs.primer_job = new CronJob(new Date(""+req.body.scheduling_date), function() {
-      console.log(`Scheduled job ${new Date()}`.yellow.inverse);
-    });
-
-    object_of_jobs.primer_job.start();
-    res.status(200).send("Report route works");
-    
-  }
-  catch(error){
-    console.log('Error with report', error);
-    res.status(500).send("Error with report");
-  } //*/
+ 
 });
 
 router.post("/destruir-report", authMiddleware, async (req, res) => {
