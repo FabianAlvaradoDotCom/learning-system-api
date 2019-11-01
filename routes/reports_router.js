@@ -21,7 +21,7 @@ let object_of_jobs = {};
 
 router.post("/get-reports-list", authMiddleware, async (req, res) => {
   try {
-    let reports_array = await Report.find();
+    let reports_array = await Report.find({},{},{ sort: { _id: -1 } /* Sorting by the newest */ });
     console.log("This is my reports array", reports_array);
     res.status(200).send({ reports_array });
   } catch (error) {
@@ -39,7 +39,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
       report_internal_name: "place_holder",
       report_distribution_list: req.body.distribution_list,
       report_email_body: req.body.email_body,
-      report_schedule_string: req.body.scheduling_date
+      report_schedule_string: req.body.scheduling_date,
+      status: "scheduled"
     });
 
     let saved_preliminar_report = await new_report.save();
@@ -74,15 +75,11 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             }
           ).limit(200);
 
-          // Creating placeholder data:
-
-          //let csv = 
+    
           await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
           
-
-          /*console.log(`THIS IS TE DATA THAT SHOULD BE SENT TO THE EMAILER: ${csv}`.red.inverse);
-
-          sendReportByEmail( saved_report.report_distribution_list, saved_report.report_email_body, csv, "csv" );*/
+          saved_report.status = "sent";
+          await saved_report.save();
 
         } catch (err) {
           console.error(err);
