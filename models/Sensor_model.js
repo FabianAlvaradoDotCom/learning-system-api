@@ -25,6 +25,10 @@ const SensorSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  alert_status: {
+    type: String,
+    required: false
+  },
   owner: {
     type: mongoose.Schema.Types.ObjectId, // By setting this type to this field, we are letting this know
     // that this is linked to another model

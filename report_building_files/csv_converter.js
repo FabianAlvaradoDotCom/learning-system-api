@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 
 const convertToCSVandEmail = async (email_recipients, email_body, data, attachment_extension) => {
 
-  const fields = ["output_data", "reading_date"];
+  const fields = ["sensor_name", "output_data", "reading_date"];
   const opts = { fields };
 
   parseAsync(data, opts)
@@ -16,14 +16,14 @@ const convertToCSVandEmail = async (email_recipients, email_body, data, attachme
           port: 465,
           secure: true,
           auth: {
-            user: "notifications@version01.com",
+            user: "report_delivery@version01.com",
             pass: "YnZvD41ERVx_"
           }
         });
     
         // send mail with defined transport object
         let info = await transporter.sendMail({
-          from: '"Bullseye Notifications" <notifications@version01.com>',
+          from: '"Bullseye Report Delivery" <report_delivery@version01.com>',
           to: email_recipients,
           subject: "Bullseye Production report",
           html: email_body,

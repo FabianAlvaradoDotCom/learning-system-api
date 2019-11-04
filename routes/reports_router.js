@@ -5,8 +5,6 @@ const CronJob = require("cron").CronJob;
 
 const convertToCSVandEmail = require('../report_building_files/csv_converter');
 
-//const sendReportByEmail = require("../report_building_files/emailer");
-
 // Importing Reports Schema
 const Report = require("../models/Report_model");
 
@@ -21,7 +19,7 @@ let object_of_jobs = {};
 
 router.post("/get-reports-list", authMiddleware, async (req, res) => {
   try {
-    let reports_array = await Report.find({},{},{ sort: { _id: -1 } /* Sorting by the newest */ });
+    let reports_array = await Report.find({},{_id:0},{ sort: { _id: 1 } /* Sorting by the oldest */ });
     console.log("This is my reports array", reports_array);
     res.status(200).send({ reports_array });
   } catch (error) {
@@ -58,13 +56,13 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
           let sensor_readings_array_for_report = await Sensor.find(
             {
               // Criteria to find the document
-              sensor_name: "sensor01"
+              //sensor_name: "sensor01" // I will send a report of all sensors
             },
             {
               // Properties to ommit sending
               _id: 0,
               __v: 0,
-              sensor_name: 0,
+              //sensor_name: 0, // I want the sensor name to be saved, so I add that to the report
               owner: 0,
               reading_type: 0,
               equipment_id: 0

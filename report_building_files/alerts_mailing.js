@@ -1,8 +1,8 @@
-"use strict";
+
 const nodemailer = require("nodemailer");
 
-let emailingReport = (email_recipients, email_body, data, attachment_extension) => {
-  // async..await is not allowed in global scope, must use a wrapper
+const emailAlerts = async (email_recipients, email_body) => { 
+
   async function main() {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -10,23 +10,17 @@ let emailingReport = (email_recipients, email_body, data, attachment_extension) 
       port: 465,
       secure: true,
       auth: {
-        user: "notifications@version01.com",
+        user: "activity_alerts@version01.com",
         pass: "YnZvD41ERVx_"
       }
     });
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-      from: '"Bullseye Notifications" <notifications@version01.com>',
+      from: '"Bullseye Activity Alert" <activity_alerts@version01.com>',
       to: email_recipients,
-      subject: "Bullseye Production report",
-      html: email_body,
-      attachments: [
-        {
-          filename: "report." + attachment_extension,
-          content: Buffer.from(data, "utf-8")
-        }
-      ]
+      subject: "Bullseye Activity Alert - Sensor out of range",
+      html: email_body
     });
 
     console.log("Message sent: %s", info.messageId);
@@ -36,7 +30,13 @@ let emailingReport = (email_recipients, email_body, data, attachment_extension) 
     // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
   }
-  main().catch(console.error);
+  main().catch(console.error);   
 };
 
-module.exports = emailingReport;
+module.exports = emailAlerts;
+
+
+
+
+
+
