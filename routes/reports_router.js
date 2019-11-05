@@ -73,6 +73,12 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             }
           ).limit(200);
 
+          // Convertindg date milliseconds to string date before sending the report
+
+          sensor_readings_array_for_report.forEach( (element) => {
+            let formatted_document_date = new Date(+element.reading_date);
+            element.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
+          });
     
           await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
           
