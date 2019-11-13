@@ -29,12 +29,8 @@ router.post("/get-reports-list", authMiddleware, async (req, res) => {
 });
 
 router.post("/schedule-report", authMiddleware, async (req, res) => {
-  // When creating a record it is not necessary to save the creation date separately, as it comes in the id, to get it we just need to get it like this:
+  // When creating a record it is not necessary to save the created date separately, as it comes in the id, to get it we just need to get it like this:
   // array_of_found_objects[0]._id.getTimestamp()
-
-  // We create a placeholder that will contain the _id of the created document in case that the schedule fails, so we will remove it finding it by the id. We create it outside the try statement so we cna access it from catch block
-  let created_report_id;
-
   try {    
     let new_report = new Report({
       report_visible_name: req.body.report_name,
@@ -46,8 +42,6 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     });
 
     let saved_preliminar_report = await new_report.save();
-
-    created_report_id = saved_preliminar_report._id;
 
     saved_preliminar_report.report_internal_name = `rep_${saved_preliminar_report._id}`;
 
@@ -103,11 +97,10 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
 
     res.status(200).send({ message: "Report created successfully" });
   } catch (error) {
-    // Getting an error means that the report was not scheduled successfully, so we get rid of the just created DB data:
-    const deleted_failed_report = await Report.findOneAndDelete({_id : created_report_id});
-    console.log(deleted_failed_report ,error);
+    console.log(error);
     res.status(500).send({ error });
   }
+
  
 });
 
