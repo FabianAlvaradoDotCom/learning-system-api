@@ -71,7 +71,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-          ).limit(200);
+          )/*.limit(200);*/
 
           // Convertindg date milliseconds to string date before sending the report
 

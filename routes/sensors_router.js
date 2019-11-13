@@ -29,32 +29,36 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
         //application process and passed in the request
       });
 
-      // From here we need to update the alers colection
+      // From here we need to update the alerts colection
 
       let found_alert_limit = await Alert.findOne({sensor_name_for_alert: sent_sensor.sensor_name});
       console.log('ALERTS RELATED', found_alert_limit);
 
+      // First we identify if the output data of captured sensor is less than the minimum limit
       if(+sent_sensor.output_data < found_alert_limit.alert_minimum_value ){
 
-        // As we had an alert, here we find if the sensor alert is already triggered, if not, we send an email or sms to the recipients
-        if(found_alert_limit.alert_trigger_status === "0"){
+        // As we had an alert, here we find if the sensor alert is not already triggered ("0") or if it was marked as "higher", and in addition we confirm that the alerts are enabled for this sensor, if so send an email or sms to the recipients, and also we update teh status of the alerts for this sensor
+        if(found_alert_limit.alert_trigger_status !== "lower" && found_alert_limit.alert_enable_status === true){
           emailAlerts(found_alert_limit.alert_distribution_list, `The sensor ${sent_sensor.sensor_name} received data that is below the expected range of possible conditions. You are receiving this because you are in the list of recipients to be notified on issues.`);
+          found_alert_limit.alert_trigger_status = "lower";
+          await found_alert_limit.save();
         }
 
-        found_alert_limit.alert_trigger_status = "lower";
-        await found_alert_limit.save();
+        // Then no matter if the alerts are triggered, we append a "lower" label to the sensor for it to show an indicator in the table
         new_sensor.alert_status = "lower";
         console.log("ALERT SAVED, IT WAS LOWER");
 
+        // We identify if the output data of captured sensor is greater than maximum limit
       }else if(+sent_sensor.output_data > found_alert_limit.alert_maximum_value ){
 
-        // As we had an alert, here we find if the sensor alert is already triggered, if not, we send an email or sms to the recipients
-        if(found_alert_limit.alert_trigger_status === "0"){
+        // As we had an alert, here we find if the sensor alert is not already triggered ("0") or if it was marked as "lower", and in addition we confirm that the alerts are enabled for this sensor, if so send an email or sms to the recipients, and also we update teh status of the alerts for this sensor
+        if(found_alert_limit.alert_trigger_status !== "higher" && found_alert_limit.alert_enable_status === true){
           emailAlerts(found_alert_limit.alert_distribution_list, `The sensor ${sent_sensor.sensor_name} received data that is above the expected range of possible conditions. You are receiving this because you are in the list of recipients to be notified on issues.`);
+          found_alert_limit.alert_trigger_status = "higher";
+          await found_alert_limit.save();
         }
 
-        found_alert_limit.alert_trigger_status = "higher";
-        await found_alert_limit.save();
+        // Then no matter if the alerts are triggered, we append a "higher" label to the sensor for it to show an indicator in the table
         new_sensor.alert_status = "higher";
         console.log("ALERT SAVED, IT WAS HIGHER");
       }
@@ -120,7 +124,7 @@ router.post(
             reading_type: 0,
             equipment_id: 0,
             numeral_system: 0,
-            reading_date: 0,
+            //reading_date: 0,
             unit: 0
           },
           {
@@ -163,7 +167,6 @@ router.post(
   async (req, res) => {
     try {
       let sensor_to_fetch = req.body.selected_sensor;
-
       // Finding what is this used for
       /*let found_sensor_readings = await Sensor.find(
         {
@@ -212,11 +215,12 @@ router.post(
       //console.log(found_sensor_readings);
 
 
-      let number_of_alerts = await Alert.find({alert_trigger_status: {$ne: "0"}},{},{});
+      let number_of_alerts = await Alert.find({alert_trigger_status: {$ne: "0"}},{alert_minimum_value:0, alert_maximum_value:0, equipment_name: 0, alert_distribution_list:0, _id:0},{});
+      let min_max_alert_current_sensor = await Alert.findOne({sensor_name_for_alert:sensor_to_fetch},{ sensor_name_for_alert:0, equipment_name: 0, alert_distribution_list:0, alert_trigger_status:0, _id:0 },{});
     
 
       // res.json({ found_sensor_readings, found_sensor_readings_graph });
-      res.status(200).send({sensor_readings: found_sensor_readings_graph, number_of_alerts});
+      res.status(200).send({sensor_readings: found_sensor_readings_graph, number_of_alerts, min_max_alert: min_max_alert_current_sensor});
 
     } catch (error) {
       console.log(error);
@@ -225,3 +229,8 @@ router.post(
 );
 
 module.exports = router;
+
+
+
+
+
