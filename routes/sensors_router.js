@@ -96,10 +96,7 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
 });
 
 // This is the login code for visualization Application
-router.post(
-  "/three-latest-sensors-for-dashboard",
-  authMiddleware,
-  async (req, res) => {
+router.post("/three-latest-sensors-for-dashboard", authMiddleware, async (req, res) => {
     try {
       // Once we are authenticated, we fetch the data of the latest 3 records saved
       let three_latest_records = [
@@ -161,10 +158,7 @@ router.post(
 );
 
 // Request to fetch the latest readings of a sensor for the TABLE
-router.post(
-  "/latest-single-sensor-readings",
-  authMiddleware,
-  async (req, res) => {
+router.post("/latest-single-sensor-readings", authMiddleware, async (req, res) => {
     try {
       let sensor_to_fetch = req.body.selected_sensor;
       // Finding what is this used for
@@ -210,7 +204,8 @@ router.post(
           // Order of the records
           sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
         }
-      ).limit(200);
+      ).limit(req.body.limit);
+      //).limit(200);
 
       //console.log(found_sensor_readings);
 
