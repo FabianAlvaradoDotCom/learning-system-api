@@ -59,7 +59,6 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
       async function() {
         try {
-          // let sensor_readings_array_for_report = await Sensor.find(
           let sensor_readings_array_for_report = await Sensor.find(
             {
               // Criteria to find the document
@@ -78,29 +77,16 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-          ).cursor();
-          //)/*.limit(200);*/
-
-          
-
-          sensor_readings_array_for_report.on("data", (doc) =>{
-            let formatted_document_date = new Date(+doc.reading_date);            
-            doc.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
-            console.log(doc);
-          });
-
-          sensor_readings_array_for_report.on("close", ()=> {
-            console.log("Done");
-          });
+          )/*.limit(200);*/
 
           // Convertindg date milliseconds to string date before sending the report
 
-          // sensor_readings_array_for_report.forEach( (element) => {
-          //   let formatted_document_date = new Date(+element.reading_date);
-          //   element.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
-          // });
+          sensor_readings_array_for_report.forEach( (element) => {
+            let formatted_document_date = new Date(+element.reading_date);
+            element.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
+          });
     
-          //await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
+          await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
           
           saved_report.status = "sent";
           await saved_report.save();
