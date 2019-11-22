@@ -78,20 +78,63 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-          ).cursor();
+          //);
           //)/*.limit(200);*/
 
-          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          ).cursor();
 
           sensor_readings_array_for_report.on("data", (doc) =>{
             let formatted_document_date = new Date(+doc.reading_date);            
             doc.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
-            console.log(doc);
+            //console.log(doc);
           });
 
           sensor_readings_array_for_report.on("close", ()=> {
             console.log("Done");
           });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           // Convertindg date milliseconds to string date before sending the report
 
