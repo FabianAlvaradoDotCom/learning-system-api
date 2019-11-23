@@ -134,7 +134,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               nueva_array_de_sensores.push(doc);
             });
 
-            sensor_readings_array_for_report.on("close", ()=> {
+            sensor_readings_array_for_report.on("close", async ()=> {
               await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
             });       
 
