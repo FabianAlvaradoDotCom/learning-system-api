@@ -1,8 +1,9 @@
 const { parseAsync } = require("json2csv");
 const nodemailer = require("nodemailer");
 
-const convertToCSVandEmail = async (email_recipients, email_body, data, attachment_extension) => {
+const convertToCSVandEmail = async (email_recipients, email_body, passed_data, attachment_extension) => {
 
+  const data = [...passed_data];
   const fields = ["sensor_name", "output_data", "reading_date"];
   const opts = { fields };
 

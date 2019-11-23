@@ -93,6 +93,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, nueva_array_de_sensores, "csv" );
               //await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
 
+              nueva_array_de_sensores = null;
+
             });         
           
           saved_report.status = "sent";
