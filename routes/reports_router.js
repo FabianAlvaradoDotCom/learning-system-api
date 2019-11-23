@@ -102,7 +102,10 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
       async function() {
         try {
-          let sensor_readings_array_for_report = await Sensor.find(
+
+          let nueva_array_de_sensores = [];
+
+          let sensor_readings_array_for_report = Sensor.find(
             {
               // Criteria to find the document
               //sensor_name: "sensor01" // I will send a report of all sensors
@@ -122,10 +125,10 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             }
             ).cursor();
 
-            let nueva_array_de_sensores = [];
+            
 
             sensor_readings_array_for_report.on("data", (doc) =>{
-              // Convertindg date milliseconds to string date before sending the report
+              // Converting date milliseconds to string date before sending the report
               let formatted_document_date = new Date(+doc.reading_date);            
               doc.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
               nueva_array_de_sensores.push(doc);
