@@ -1,16 +1,11 @@
-const { parseAsync } = require("json2csv");
+
 const nodemailer = require("nodemailer");
 
-const convertToCSVandEmail = async (email_recipients, email_body, passed_data, attachment_extension) => {
+const convertToCSVandEmail = async (email_recipients, email_body, csv, attachment_extension) => {
 
-  const data = [...passed_data];
-  const fields = ["sensor_name", "output_data", "reading_date"];
-  const opts = { fields };
+  
 
-  parseAsync(data, opts)
-    .then(generated_csv_string => {
-
-      let csv = generated_csv_string;
+  
 
       async function main() {
         // create reusable transporter object using the default SMTP transport
@@ -40,7 +35,6 @@ const convertToCSVandEmail = async (email_recipients, email_body, passed_data, a
     
         console.log("Message sent: %s", info.messageId); 
         
-        csv = null;
         
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
     
@@ -50,8 +44,7 @@ const convertToCSVandEmail = async (email_recipients, email_body, passed_data, a
       }
       main().catch(console.error);
 
-    })
-    .catch(err => console.error(err));
+    
 };
 
 module.exports = convertToCSVandEmail;

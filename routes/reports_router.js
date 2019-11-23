@@ -13,6 +13,19 @@ const Sensor = require("../models/Sensor_model");
 // Importing middleware auth
 const authMiddleware = require("../middleware/auth-middleware");
 
+
+
+
+
+
+const { Transform } = require("json2csv");
+const { Readable } = require('stream');
+const fs = require('fs');
+
+const nodemailer = require("nodemailer");
+
+
+
 let object_of_jobs = {};
 
 
@@ -62,7 +75,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
       async function() {
         try {
 
-          let nueva_array_de_sensores = [];
+
 
           let sensor_readings_array_for_report = Sensor.find(
             {
@@ -83,14 +96,170 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
             )
-            .limit(number_of_records_for_reporting)
+            //.limit(number_of_records_for_reporting)
+            .limit(1500000)
             .cursor();            
 
-            sensor_readings_array_for_report.on("data", (doc) =>{
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            /*async function main(csv) {
+              // create reusable transporter object using the default SMTP transport
+              let transporter = nodemailer.createTransport({
+                host: "version01.com",
+                port: 465,
+                secure: true,
+                auth: {
+                  user: "report_delivery@version01.com",
+                  pass: "YnZvD41ERVx_"
+                }
+              });
+          
+              // send mail with defined transport object
+              let info = await transporter.sendMail({
+                from: '"Bullseye Report Delivery" <report_delivery@version01.com>',
+                to: email_recipients,
+                subject: "Bullseye Production report",
+                html: email_body,
+                attachments: [
+                  {
+                    filename: "report." + attachment_extension,
+                    content: Buffer.from(csv, "utf-8")
+                  }
+                ]
+              });
+          
+              console.log("Message sent: %s", info.messageId); 
+              
+              
+              // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+          
+              // Preview only available when sending through an Ethereal account
+              // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+              // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
+            }
+            main(array_objects).catch(console.error);*/
+
+
+
+
+           
+           
+            const input = new Readable({ objectMode: true });
+            input._read = () => {};
+
+
+
+            
+
+            
+            sensor_readings_array_for_report.on('data', obj => {
               // Converting date milliseconds to string date before sending the report
-              let formatted_document_date = new Date(+doc.reading_date);            
-              doc.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
-              nueva_array_de_sensores.push(doc);
+              let formatted_document_date = new Date(+obj.reading_date);            
+              obj.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
+
+              input.push(obj);
+            });
+            // Pushing a null close the stream
+            sensor_readings_array_for_report.on("close", () => {
+              input.push(null);                        
+              //await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, output[0], "csv" );
+            });
+         
+            
+         
+            const fields = ["sensor_name", "output_data", "reading_date"];
+            const opts = { fields };
+            const transformOpts = { objectMode: true };
+         
+            const json2csv = new Transform(opts, transformOpts);
+            const processor = input.pipe(json2csv);//.pipe(output);
+
+
+            const output = new Readable({ objectMode: true });
+            output._read = () => {};
+
+          
+
+            json2csv.on("data", (chunk) => {
+              output.push(chunk);
+            });
+
+            json2csv.on("end", (chunk) => {
+              output.push(null);              
+            });
+            
+
+            async function main(csv) {
+              // create reusable transporter object using the default SMTP transport
+              let transporter = nodemailer.createTransport({
+                host: "version01.com",
+                port: 465,
+                secure: true,
+                auth: {
+                  user: "report_delivery@version01.com",
+                  pass: "YnZvD41ERVx_"
+                }
+              });
+          
+              // send mail with defined transport object
+              let info = await transporter.sendMail({
+                from: '"Bullseye Report Delivery" <report_delivery@version01.com>',
+                to: saved_report.report_distribution_list,
+                subject: "Bullseye Production report",
+                html: saved_report.report_email_body,
+                attachments: [
+                  {
+                    filename: "report.csv",
+                    content: csv
+                  }
+                ]
+              });
+          
+              console.log("Message sent: %s", info.messageId); 
+              
+              
+              // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+          
+              // Preview only available when sending through an Ethereal account
+              // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+              // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
+            }
+            main(output).catch(console.error);
+
+
+
+
+
+            
+            
+            
+            
+
+            
+           
+           
+           
+           
+           
+           
+            /*sensor_readings_array_for_report.on("data", (obj) =>{
+              // Converting date milliseconds to string date before sending the report
+              let formatted_document_date = new Date(+obj.reading_date);            
+              obj.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
+              nueva_array_de_sensores.push(obj);
             });
 
             sensor_readings_array_for_report.on("close", async ()=> {
@@ -99,11 +268,25 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
 
               nueva_array_de_sensores = null;
 
-            });         
+            });*/         
           
           saved_report.status = "sent";
           await saved_report.save();
           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         } catch (err) {
           console.error(err);
