@@ -79,6 +79,7 @@ const convertToCSVandEmail = async (email_recipients, email_body, data, attachme
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
       }
       main().catch(console.error);
+      main = null;
 
     })
     .catch(err => console.error(err));
