@@ -80,7 +80,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-            ).cursor();            
+            ).limit(100)
+            .cursor();            
 
             sensor_readings_array_for_report.on("data", (doc) =>{
               // Converting date milliseconds to string date before sending the report

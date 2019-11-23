@@ -8,7 +8,9 @@ const convertToCSVandEmail = async (email_recipients, email_body, passed_data, a
   const opts = { fields };
 
   parseAsync(data, opts)
-    .then(csv => {
+    .then(generated_csv_string => {
+
+      let csv = generated_csv_string;
 
       async function main() {
         // create reusable transporter object using the default SMTP transport
@@ -36,7 +38,9 @@ const convertToCSVandEmail = async (email_recipients, email_body, passed_data, a
           ]
         });
     
-        console.log("Message sent: %s", info.messageId);     
+        console.log("Message sent: %s", info.messageId); 
+        
+        csv = null;
         
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
     
