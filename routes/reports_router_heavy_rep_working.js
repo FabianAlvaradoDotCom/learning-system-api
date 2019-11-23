@@ -55,6 +55,49 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
 
     console.log(saved_report);
 
+    /* Scheduling the job without STREAM
+    object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
+      async function() {
+        try {
+          let sensor_readings_array_for_report = await Sensor.find(
+            {
+              // Criteria to find the document
+              //sensor_name: "sensor01" // I will send a report of all sensors
+            },
+            {
+              // Properties to ommit sending
+              _id: 0,
+              __v: 0,
+              //sensor_name: 0, // I want the sensor name to be saved, so I add that to the report
+              owner: 0,
+              reading_type: 0,
+              equipment_id: 0
+            },
+            {
+              // Order of the records
+              sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
+            }
+          ).limit(200);
+
+          // Convertindg date milliseconds to string date before sending the report
+
+          sensor_readings_array_for_report.forEach( (element) => {
+            let formatted_document_date = new Date(+element.reading_date);
+            element.reading_date = formatted_document_date.toLocaleDateString() + " " + formatted_document_date.toLocaleTimeString("es-MX");
+          });
+    
+          await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
+          
+          saved_report.status = "sent";
+          await saved_report.save();
+
+        } catch (err) {
+          console.error(err);
+          res.status(404).send({ error });
+        }
+      }
+    );//*/
+
     //* Scheduling the job using STREAM
     object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
       async function() {
@@ -94,17 +137,6 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             sensor_readings_array_for_report.on("close", async ()=> {
               await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, nueva_array_de_sensores, "csv" );
               //await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
-              
-              
-              
-              
-              
-              nueva_array_de_sensores = null;
-
-
-
-
-              
             });       
 
          
