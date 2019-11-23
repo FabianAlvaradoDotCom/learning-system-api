@@ -34,6 +34,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
 
   // We create a placeholder that will contain the _id of the created document in case that the schedule fails, so we will remove it finding it by the id. We create it outside the try statement so we cna access it from catch block
   let created_report_id;
+  let number_of_records_for_reporting = +req.body.number_of_records_for_reporting;
+  let scheduling_date = req.body.scheduling_date;
 
   try {    
     let new_report = new Report({
@@ -56,7 +58,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     console.log(saved_report);
 
     //* Scheduling the job using STREAM
-    object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + req.body.scheduling_date),
+    object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + scheduling_date),
       async function() {
         try {
 
@@ -80,7 +82,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-            ).limit(100)
+            )
+            .limit(number_of_records_for_reporting)
             .cursor();            
 
             sensor_readings_array_for_report.on("data", (doc) =>{
