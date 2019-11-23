@@ -80,9 +80,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               // Order of the records
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
-            ).cursor();
-
-            
+            ).cursor();            
 
             sensor_readings_array_for_report.on("data", (doc) =>{
               // Converting date milliseconds to string date before sending the report
@@ -94,24 +92,8 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             sensor_readings_array_for_report.on("close", async ()=> {
               await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, nueva_array_de_sensores, "csv" );
               //await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, sensor_readings_array_for_report, "csv" );
-              
-              
-              
-              
-              
-              nueva_array_de_sensores = null;
-              console.log("Debe estar vacia", nueva_array_de_sensores);
 
-
-
-
-
-            });       
-
-         
-
-         
-         
+            });         
           
           saved_report.status = "sent";
           await saved_report.save();

@@ -35,42 +35,7 @@ const convertToCSVandEmail = async (email_recipients, email_body, data, attachme
           ]
         });
     
-        console.log("Message sent: %s", info.messageId);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        info = null;
-        csv = null;
-
-        console.log("deben estar vacias", info, csv);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        console.log("Message sent: %s", info.messageId);     
         
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
     
@@ -79,7 +44,6 @@ const convertToCSVandEmail = async (email_recipients, email_body, data, attachme
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
       }
       main().catch(console.error);
-      main = null;
 
     })
     .catch(err => console.error(err));
