@@ -36,6 +36,42 @@ const convertToCSVandEmail = async (email_recipients, email_body, data, attachme
         });
     
         console.log("Message sent: %s", info.messageId);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        info = null;
+        csv = null;
+
+        console.log("deben estar vacias", info, csv);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
     
         // Preview only available when sending through an Ethereal account

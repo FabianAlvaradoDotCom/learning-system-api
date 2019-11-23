@@ -100,11 +100,12 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               
               
               nueva_array_de_sensores = null;
+              console.log("Debe estar vacia", nueva_array_de_sensores);
 
 
 
 
-              
+
             });       
 
          
