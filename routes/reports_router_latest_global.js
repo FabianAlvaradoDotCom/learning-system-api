@@ -13,7 +13,7 @@ const Sensor = require("../models/Sensor_model");
 // Importing middleware auth
 const authMiddleware = require("../middleware/auth-middleware");
 
-//let object_of_jobs = {};
+let object_of_jobs = {};
 
 
 
@@ -58,7 +58,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     console.log(saved_report);
 
     //* Scheduling the job using STREAM
-    const new_new_job = new CronJob( new Date("" + scheduling_date),
+    object_of_jobs[saved_preliminar_report.report_internal_name] = new CronJob( new Date("" + scheduling_date),
       async function() {
         try {
 
@@ -113,7 +113,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
     //*/
 
 
-    new_new_job.start();
+    object_of_jobs[saved_preliminar_report.report_internal_name].start();
     //*/
 
     res.status(200).send({ message: "Report created successfully" });
