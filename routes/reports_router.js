@@ -1,9 +1,7 @@
 const express = require("express");
 const router = new express.Router();
 
-const CronJob = require("cron").CronJob;
 
-const convertToCSVandEmail = require('../report_building_files/csv_converter');
 
 // Importing Reports Schema
 const Report = require("../models/Report_model");
@@ -29,6 +27,10 @@ router.post("/get-reports-list", authMiddleware, async (req, res) => {
 });
 
 router.post("/schedule-report", authMiddleware, async (req, res) => {
+
+  const CronJob = require("cron").CronJob;
+  const convertToCSVandEmail = require('../report_building_files/csv_converter');
+
   // When creating a record it is not necessary to save the creation date separately, as it comes in the id, to get it we just need to get it like this:
   // array_of_found_objects[0]._id.getTimestamp()
 
