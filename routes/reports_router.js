@@ -3,7 +3,6 @@ const router = new express.Router();
 
 const CronJob = require("cron").CronJob;
 
-const convertToCSVandEmail = require('../report_building_files/csv_converter');
 
 // Importing Reports Schema
 const Report = require("../models/Report_model");
@@ -20,7 +19,6 @@ const authMiddleware = require("../middleware/auth-middleware");
 
 const { Transform } = require("json2csv");
 const { Readable } = require('stream');
-const fs = require('fs');
 
 const nodemailer = require("nodemailer");
 
@@ -96,8 +94,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
               sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
             }
             )
-            //.limit(number_of_records_for_reporting)
-            .limit(1500000)
+            .limit(number_of_records_for_reporting)
             .cursor();            
 
 
