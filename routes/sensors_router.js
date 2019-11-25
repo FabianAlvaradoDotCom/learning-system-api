@@ -183,7 +183,7 @@ router.post("/latest-single-sensor-readings", authMiddleware, async (req, res) =
       ).limit(20); */
 
       // Request to fetch the latest readings of a sensor for the TABLE (limited to 200)
-      let found_sensor_readings_graph = await Sensor.find(
+      let found_sensor_readings_graph = Sensor.find(
         {
           // Criteria to find the document
           sensor_name: sensor_to_fetch
@@ -204,21 +204,35 @@ router.post("/latest-single-sensor-readings", authMiddleware, async (req, res) =
           // Order of the records
           sort: { reading_date: -1 } // Sorting by the newest usign reading date as criteria
         }
-      ).limit(req.body.limit);
-      //).limit(200);
+      ).limit(req.body.limit)//).limit(200);
+      .cursor();
 
       //console.log(found_sensor_readings);
 
 
-      let number_of_alerts = await Alert.find({alert_trigger_status: {$ne: "0"}},{alert_minimum_value:0, alert_maximum_value:0, equipment_name: 0, alert_distribution_list:0, _id:0},{});
-      let min_max_alert_current_sensor = await Alert.findOne({sensor_name_for_alert:sensor_to_fetch},{ sensor_name_for_alert:0, equipment_name: 0, alert_distribution_list:0, alert_trigger_status:0, _id:0 },{});
-    
 
-      // res.json({ found_sensor_readings, found_sensor_readings_graph });
-      res.status(200).send({sensor_readings: found_sensor_readings_graph, number_of_alerts, min_max_alert: min_max_alert_current_sensor});
+      let streamed_array_of_found_readings = [];
+
+      found_sensor_readings_graph.on("data", (doc) =>{                   
+        streamed_array_of_found_readings.push(doc);
+      });
+
+      found_sensor_readings_graph.on("close", async ()=> { 
+        
+        let number_of_alerts = await Alert.find({alert_trigger_status: {$ne: "0"}},{alert_minimum_value:0, alert_maximum_value:0, equipment_name: 0, alert_distribution_list:0, _id:0},{});
+        let min_max_alert_current_sensor = await Alert.findOne({sensor_name_for_alert:sensor_to_fetch},{ sensor_name_for_alert:0, equipment_name: 0, alert_distribution_list:0, alert_trigger_status:0, _id:0 },{});
+
+        res.status(200).send({sensor_readings: streamed_array_of_found_readings, number_of_alerts, min_max_alert: min_max_alert_current_sensor});
+                      
+        //streamed_array_of_found_readings = null;
+        //found_sensor_readings_graph = null;
+      });
+
+      
 
     } catch (error) {
       console.log(error);
+      res.status(404).send({message: "There was an error", error});
     }
   }
 );

@@ -96,7 +96,7 @@ router.post("/schedule-report", authMiddleware, async (req, res) => {
             });
 
             find_sensors_with_cursor.on("close", async ()=> {
-              streamed_sensors_array.push(null);
+              //streamed_sensors_array.push(null); // Not necessary, only for csv transfirm, but this is only a query
               await convertToCSVandEmail(saved_report.report_distribution_list, saved_report.report_email_body, streamed_sensors_array, "csv" );              
               streamed_sensors_array = null;
               find_sensors_with_cursor=null;
