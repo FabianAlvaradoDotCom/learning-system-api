@@ -240,6 +240,3 @@ router.post("/latest-single-sensor-readings", authMiddleware, async (req, res) =
 module.exports = router;
 
 
-
-
-

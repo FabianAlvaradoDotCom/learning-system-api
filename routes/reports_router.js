@@ -14,7 +14,6 @@ const authMiddleware = require("../middleware/auth-middleware");
 //let object_of_jobs = {};
 
 
-
 router.post("/get-reports-list", authMiddleware, async (req, res) => {
   try {
     let reports_array = await Report.find({},{_id:0},{ sort: { _id: 1 } /* Sorting by the oldest */ });
