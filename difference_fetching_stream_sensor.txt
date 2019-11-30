@@ -1,0 +1,17 @@
+400 Sensors Fetch
+
+Regular query:
+345.9000000730157 milliseconds
+499.39999997150153 milliseconds
+439.4000000320375 milliseconds
+550.3999999491498 milliseconds
+283.99999998509884 milliseconds
+474.0000000456348 milliseconds
+
+Stream query ( .cursor() )
+229.39999995287508 milliseconds
+234.3000000109896 milliseconds
+262.4000000068918 milliseconds
+244.30000002030283 milliseconds
+175.79999996814877 milliseconds
+285.90000001713634 milliseconds
