@@ -54,4 +54,19 @@ router.post("/edit-alert", authMiddleware, async (req, res) => {
   }
 });
 
+
+router.post("/clear-all-alerts", authMiddleware, async (req, res) => {
+  try{
+    let all_alerts_array = await Alert.find({});
+    all_alerts_array.forEach(async (alert) => {
+      alert.alert_trigger_status = "0";
+      await alert.save();
+    });
+
+    res.status(200).send({ message: "Alerts cleared successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error });
+  }
+});
 module.exports = router;
