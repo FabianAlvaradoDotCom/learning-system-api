@@ -84,9 +84,9 @@ router.post("/create-sensor-reading", authMiddleware, async (req, res) => {
           html_alert_email_body.sort();
           html_alert_email_body.unshift("The below are the sensors that were capturing data out of range:");
           await emailAlerts(found_alert_limit.alert_distribution_list, html_alert_email_body.join(''));
-          res.status(200).json({ message: "Sensors created successfully" });
+          res.status(200).json({ message: "Sensors created successfully", numero: req.body.sensors.length });
         }else{
-          res.status(200).json({ message: "Sensors created successfully" });
+          res.status(200).json({ message: "Sensors created successfully", numero: req.body.sensors.length });
         }
       }
     });   
