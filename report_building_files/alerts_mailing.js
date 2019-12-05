@@ -24,6 +24,7 @@ const emailAlerts = async (email_recipients, email_body) => {
     });
 
     console.log("Message sent: %s", info.messageId);
+    console.log(email_body);
     // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
     // Preview only available when sending through an Ethereal account

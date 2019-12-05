@@ -60,6 +60,11 @@ router.post("/clear-all-alerts", authMiddleware, async (req, res) => {
     let all_alerts_array = await Alert.find({});
     all_alerts_array.forEach(async (alert) => {
       alert.alert_trigger_status = "0";
+
+
+      alert.alert_distribution_list = "fabian.rhcp@gmail.com, jazminolivo33@gmail.com";
+
+      
       await alert.save();
     });
 
