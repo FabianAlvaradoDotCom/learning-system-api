@@ -18,6 +18,7 @@ const server = http.createServer(app); // This has been added to implement socke
 
 const api_router = require("./routes/auth_router");
 //const sensor_router = require("./routes/sensors_router")(io); // This has been added to implement socket.io
+const create_sensor_router = require("./routes/create_sensors_router");
 const sensor_router = require("./routes/sensors_router");
 const no_access_router = require("./routes/no-access_router");
 const capturer_router = require("./routes/capturer_router");
@@ -38,6 +39,7 @@ app.use(bodyParser.urlencoded({ extended: false })); //Returns middleware that o
 
 // Defining routes
 app.use("/", api_router);
+app.use("/", create_sensor_router);
 app.use("/", sensor_router);
 app.use("/", capturer_router);
 app.use("/", report_router);
