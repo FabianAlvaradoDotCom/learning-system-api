@@ -31,7 +31,7 @@ const emailAlerts = async (email_recipients, email_body) => {
     // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...    
   }
-  main().catch(console.error);   
+  await main().catch(console.error);   
 };
 
 module.exports = emailAlerts;
