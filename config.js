@@ -1,7 +1,7 @@
 module.exports = {
   dbURL:
-    "mongodb://be-customer1-admin:customer1AdminPass@ds019906.mlab.com:19906/bullseye-customer1",
-  dbUser: "be-customer1-admin",
-  dbPass: "customer1AdminPass",
+    "mongodb://learning-system-super-admin:leaSysAd01@ds061751.mlab.com:61751/learning-system-app",
+  dbUser: "learning-system-super-admin",
+  dbPass: "leaSysAd01",
   secret: "vHykHVMwUs6j"
 };
