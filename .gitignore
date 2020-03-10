@@ -2,4 +2,4 @@
 used_libraries.txt
 pending-items.txt
 package-lock.json
-database.js
+config.js
