@@ -10,7 +10,8 @@ const User = require("./models/User_model");
 module.exports = mongoose
   .connect(config.dbURL, {
     useNewUrlParser: true,
-    useCreateIndex: true // This will make mongoose to create indexes to make data access faster
+    useCreateIndex: true, // This will make mongoose to create indexes to make data access faster
+    useUnifiedTopology: true
   })
   .then(res => {
     console.log("Successfully connected to the DB".blue.inverse);
