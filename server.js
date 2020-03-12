@@ -9,6 +9,7 @@ const http = require("http"); // This has been added to implement socket.io
 const express = require("express");
 //const socket_io = require("socket.io"); // This has been added to implement socket.io
 const bodyParser = require("body-parser");
+const cors = require('cors');
 const colors = require("colors");
 
 // Initializing the express function but this this time we are also implementing Socket IO
@@ -29,6 +30,7 @@ app.use(authMiddleware); --*/
 app.use(bodyParser.json()); // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 // We could have used also: app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false })); //Returns middleware that only parses urlencoded bodies and only looks at requests where the Content-Type header matches the type option
+app.use(cors());
 
 // Defining routes
 app.use("/", create_question_router);
